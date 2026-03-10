@@ -1,4 +1,4 @@
-﻿<html lang="zh-CN"><head>
+<html lang="zh-CN"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>派信娱乐 - Pi Network社交应用</title>
@@ -29,6 +29,32 @@
       }
     }
   </script>
+  
+  <!-- 音效预加载 -->
+  <audio id="click-sound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="pop-sound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="success-sound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-remove-2576.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="error-sound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="game-sound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="modal-sound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="tab-sound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="achievement-sound" preload="auto">
+    <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg">
+  </audio>
   <style type="text/tailwindcss">
     @layer utilities {
       .content-auto {
@@ -89,20 +115,31 @@
       .progress-fill {
         @apply h-full bg-gradient-to-r from-blue-500 to-purple-500;
       }
+      .animate-marquee {
+        animation: marquee 30s linear infinite;
+      }
+      @keyframes marquee {
+        0% {
+          transform: translateX(100%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
     }
   </style>
 </head>
-<body class="font-sans text-textDark overflow-hidden h-screen flex flex-col bg-gradient-to-br from-black to-purple-900">
+<body class="font-sans text-textDark h-screen flex flex-col bg-gradient-to-br from-black to-purple-900">
   <!-- 顶部导航栏 -->
   <header class="bg-secondary shadow-bottom z-10">
     <div class="flex items-center justify-between px-4 h-12">
       <h1 id="page-title" class="text-lg font-medium">全球派友社群</h1>
       <div class="flex items-center space-x-4">
-        <button id="checkin-btn" class="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-medium hover:bg-yellow-400 transition-colors hidden">
+        <button id="checkin-btn" class="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-medium hover:bg-yellow-400 transition-colors hidden" onclick="playSound('click-sound')">
           <i class="fa fa-calendar-check-o mr-1"></i> 签到
         </button>
         <div class="relative">
-          <button id="login-btn" class="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-medium hover:bg-yellow-400 transition-colors">
+          <button id="login-btn" class="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-medium hover:bg-yellow-400 transition-colors" onclick="playSound('click-sound')">
             派币授权登录
           </button>
           <div id="logout-menu" class="hidden absolute right-0 mt-2 w-32 bg-gray-900 rounded-md shadow-lg z-20">
@@ -111,7 +148,7 @@
             </button>
           </div>
         </div>
-        <button id="more-btn" class="text-textDark">
+        <button id="more-btn" class="text-textDark" onclick="playSound('click-sound')">
           <i class="fa fa-ellipsis-v text-lg"></i>
         </button>
       </div>
@@ -119,7 +156,7 @@
   </header>
 
   <!-- 主内容区域 -->
-  <main class="flex-1 overflow-hidden relative">
+  <main class="flex-1 relative overflow-y-auto">
     <!-- 聊天页面 -->
     <section id="chat-page" class="h-full flex flex-col md:flex-row">
       <!-- 消息列表 -->
@@ -134,49 +171,24 @@
           </div>
         </div>
         
-        <!-- 搜索框 -->
-        <div class="p-3 bg-secondary">
-          <div class="flex items-center bg-secondary rounded-full px-4 py-2">
-            <i class="fa fa-search text-textLight mr-2"></i>
-            <input type="text" placeholder="搜索" class="bg-transparent w-full focus:outline-none text-sm">
-          </div>
-        </div>
+
+
         
-        <!-- 公告流动栏 -->
-        <div class="bg-black text-white p-2 border-b border-borderColor overflow-hidden relative">
+        <!-- 滚动公告栏 -->
+        <div class="bg-black text-white p-2 mb-2 overflow-hidden relative">
           <div class="flex items-center">
-            <span class="mr-2 text-yellow-400 font-bold">公告:</span>
-            <div class="marquee-container whitespace-nowrap">
-              <div class="marquee-content">🎉 派信娱乐正式上线！欢迎各位派友加入我们的大家庭！🎮 新游戏派币象棋和派币跑得快即将上线，敬请期待！💎 股东招募计划和推广大使计划现已启动，快来参与吧！</div>
+            <span class="mr-2 text-yellow-400">公告:</span>
+            <div class="marquee-container whitespace-nowrap overflow-hidden">
+              <div class="marquee-content inline-block animate-marquee">派信娱乐全新上线，快来和好友一起畅玩麻将、斗地主吧！更有神秘新游戏即将推出，敬请期待！</div>
             </div>
           </div>
         </div>
         
-        <!-- 功能按钮区域 -->
-        <div class="p-3 flex justify-end">
-          <button id="add-group-btn" class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center shadow-lg hover:bg-opacity-90 transition-all">
-            <i class="fa fa-plus text-xl"></i>
+        <!-- 添加按钮 -->
+        <div class="flex justify-start mb-3 px-3">
+          <button id="add-btn" class="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg hover:bg-primary/80 transition-colors" onclick="playSound('modal-sound'); showAddOptions()">
+            <i class="fa fa-plus text-white text-xl"></i>
           </button>
-        </div>
-        
-        <!-- 省份选择区域 -->
-        <div class="p-3 border-b border-borderColor overflow-x-auto scrollbar-hide" style="max-height: 90px;">
-          <div id="province-buttons" class="grid grid-cols-6 gap-2" style="width: max-content;">
-            <!-- 省份按钮将通过JavaScript动态生成 -->
-          </div>
-        </div>
-        
-        <!-- 城市列表（默认隐藏） -->
-        <div id="city-list-container" class="hidden flex-1 overflow-y-auto scrollbar-hide">
-          <div class="p-3 border-b border-borderColor flex items-center">
-            <button id="back-to-provinces" class="mr-2">
-              <i class="fa fa-arrow-left"></i>
-            </button>
-            <h3 id="current-province" class="font-medium">北京</h3>
-          </div>
-          <div id="city-list" class="bg-transparent">
-            <!-- 城市项将通过JavaScript动态生成 -->
-          </div>
         </div>
         
         <!-- 消息列表 -->
@@ -198,13 +210,13 @@
             <h2 id="chat-name" class="font-medium">选择一个联系人开始聊天</h2>
           </div>
           <div class="flex items-center space-x-4">
-            <button class="text-textDark">
+            <button class="text-textDark" onclick="playSound('click-sound')">
               <i class="fa fa-volume-up"></i>
             </button>
-            <button class="text-textDark">
+            <button class="text-textDark" onclick="playSound('click-sound')">
               <i class="fa fa-search"></i>
             </button>
-            <button class="text-textDark">
+            <button class="text-textDark" onclick="playSound('click-sound')">
               <i class="fa fa-ellipsis-v"></i>
             </button>
           </div>
@@ -228,20 +240,20 @@
                 <i class="fa fa-paperclip text-xl"></i>
               </button>
             </div>
-            <button class="text-textDark">
+            <button class="text-textDark" onclick="playSound('click-sound')">
               <i class="fa fa-microphone text-xl"></i>
             </button>
           </div>
           <div class="flex items-center">
             <input id="message-input" type="text" placeholder="输入消息..." class="flex-1 bg-secondary rounded-full px-4 py-2 focus:outline-none">
-            <button id="send-message" class="ml-2 text-primary font-medium">发送</button>
+            <button id="send-message" class="ml-2 text-primary font-medium" onclick="playSound('click-sound')">发送</button>
           </div>
         </div>
       </div>
     </section>
 
     <!-- 联系人页面 - 成长系统 -->
-    <section id="contacts-page" class="hidden h-full flex flex-col">
+    <section id="contacts-page" class="hidden h-full flex flex-col overflow-y-auto scrollbar-hide">
       <!-- 成长系统头部 -->
       <div class="bg-secondary p-4">
         <div class="flex items-center justify-between mb-4">
@@ -276,7 +288,7 @@
               <h4 class="font-medium">社交达人</h4>
               <span class="text-yellow-400 text-xs">已完成</span>
             </div>
-            <p class="text-textLight text-xs mb-2">添加50个好友并保持活跃聊天</p>
+            <p class="text-textLight text-xs mb-2">添加5个好友并保持活跃聊天</p>
             <div class="flex items-center justify-between">
               <div class="text-xs text-textLight">50/50</div>
               <div class="progress-bar w-24">
@@ -289,7 +301,7 @@
               <h4 class="font-medium">游戏高手</h4>
               <span class="text-textLight text-xs">进行中</span>
             </div>
-            <p class="text-textLight text-xs mb-2">在3款不同游戏中达到10级</p>
+            <p class="text-textLight text-xs mb-2">在3款不同游戏中达到5级</p>
             <div class="flex items-center justify-between">
               <div class="text-xs text-textLight">2/3</div>
               <div class="progress-bar w-24">
@@ -302,7 +314,7 @@
               <h4 class="font-medium">派币收藏家</h4>
               <span class="text-textLight text-xs">进行中</span>
             </div>
-            <p class="text-textLight text-xs mb-2">累计获得10000派币</p>
+            <p class="text-textLight text-xs mb-2">累计获得1000派币</p>
             <div class="flex items-center justify-between">
               <div class="text-xs text-textLight">6500/10000</div>
               <div class="progress-bar w-24">
@@ -315,7 +327,7 @@
               <h4 class="font-medium">社区贡献者</h4>
               <span class="text-textLight text-xs">进行中</span>
             </div>
-            <p class="text-textLight text-xs mb-2">发布50条有价值的社区内容</p>
+            <p class="text-textLight text-xs mb-2">发布5条有价值的社区内容</p>
             <div class="flex items-center justify-between">
               <div class="text-xs text-textLight">30/50</div>
               <div class="progress-bar w-24">
@@ -327,7 +339,7 @@
       </div>
       
       <!-- 每日任务 -->
-      <div class="p-4 bg-secondary mt-2 flex-1 overflow-y-auto scrollbar-hide">
+      <div class="p-4 bg-secondary mt-2">
         <h3 class="text-lg font-medium mb-3">每日任务</h3>
         <div class="space-y-3">
           <div class="bg-gray-800 rounded-lg p-3 flex items-center justify-between">
@@ -337,7 +349,7 @@
               </div>
               <div>
                 <h4 class="font-medium text-sm">发送10条消息</h4>
-                <p class="text-textLight text-xs">奖励: 50派币</p>
+                <p class="text-textLight text-xs">奖励: 0.01派币</p>
               </div>
             </div>
             <button class="bg-green-500 text-white px-3 py-1 rounded-full text-xs">已完成</button>
@@ -349,7 +361,7 @@
               </div>
               <div>
                 <h4 class="font-medium text-sm">玩1局游戏</h4>
-                <p class="text-textLight text-xs">奖励: 100派币</p>
+                <p class="text-textLight text-xs">奖励: 0.2派币</p>
               </div>
             </div>
             <button class="bg-primary text-white px-3 py-1 rounded-full text-xs">去完成</button>
@@ -361,7 +373,7 @@
               </div>
               <div>
                 <h4 class="font-medium text-sm">分享给3位好友</h4>
-                <p class="text-textLight text-xs">奖励: 200派币</p>
+                <p class="text-textLight text-xs">奖励: 0.2派币</p>
               </div>
             </div>
             <button class="bg-primary text-white px-3 py-1 rounded-full text-xs">去完成</button>
@@ -431,15 +443,7 @@
           </div>
         </div>
         
-        <!-- 滚动公告栏 -->
-        <div class="bg-black text-white p-2 mb-2 overflow-hidden relative">
-          <div class="flex items-center">
-            <span class="mr-2 text-yellow-400">公告:</span>
-            <div class="marquee-container whitespace-nowrap">
-              <div class="marquee-content">派信娱乐全新上线，快来和好友一起畅玩麻将、斗地主吧！更有神秘新游戏即将推出，敬请期待！</div>
-            </div>
-          </div>
-        </div>
+
 
         <!-- 热门游戏 -->
         <div class="bg-secondary p-4 mb-2">
@@ -516,7 +520,7 @@
           <h2 id="user-name" class="text-lg font-medium">用户名：15535665478</h2>
           <p id="user-id" class="text-textLight text-sm">ID：314159</p>
         </div>
-        <button class="text-textDark">
+        <button class="text-textDark" onclick="showQRCodeModal()">
           <i class="fa fa-qrcode text-2xl transform scale-120"></i>
         </button>
       </div>
@@ -529,7 +533,7 @@
             <p class="text-2xl font-bold text-yellow-400">1,234.56</p>
           </div>
           <div class="flex space-x-2">
-            <button class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-600 transition-colors" onclick="showToast('充值功能正在开发中，敬请期待')">充值</button>
+            <button class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-600 transition-colors" onclick="showRechargeModal()">充值</button>
             <button class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors" onclick="showToast('提现功能正在开发中，敬请期待')">提现</button>
           </div>
         </div>
@@ -618,20 +622,11 @@
 
   <!-- 股东专用群按钮 (仅在全球社区页面显示) -->
   <div id="group-buttons-container" class="fixed bottom-16 left-4 right-4 flex justify-between items-center z-20">
-    <button id="shareholder-group-btn" class="bg-yellow-500 text-black w-24 h-24 rounded-lg flex flex-col items-center justify-center shadow-lg hover:bg-yellow-400 transition-colors">
-      <i class="fa fa-users text-2xl mb-2"></i>
-      <span class="text-xs font-bold text-center">1,000名股东<br>专用群</span>
-    </button>
     
-    <button id="announcement-btn" class="bg-gradient-to-r from-yellow-500 to-purple-600 text-white w-16 h-16 rounded-lg flex flex-col items-center justify-center shadow-lg hover:scale-105 transition-all">
-      <i class="fa fa-bullhorn text-xl mb-1"></i>
-      <span class="text-xs font-bold">公告</span>
-    </button>
     
-    <button id="ambassador-group-btn" class="bg-purple-600 text-white w-24 h-24 rounded-lg flex flex-col items-center justify-center shadow-lg hover:bg-purple-500 transition-colors">
-      <i class="fa fa-star text-2xl mb-2"></i>
-      <span class="text-xs font-bold text-center">推广大使<br>股东群</span>
-    </button>
+    
+    
+    
   </div>
 
   <!-- 底部导航栏 -->
@@ -998,6 +993,8 @@
       renderMessageList();
       setupEventListeners();
       initMarquee();
+      initDailyTasks();
+      initAddButton();
     }
 
     // 渲染消息列表
@@ -1207,6 +1204,7 @@
 
     // 切换页面
     function switchPage(page) {
+      playSound('tab-sound');
       // 隐藏所有页面
       Object.values(pages).forEach(p => p.classList.add('hidden'));
       
@@ -1429,22 +1427,20 @@
       
       // 公告按钮点击事件
       document.getElementById('announcement-btn').addEventListener('click', () => {
-        document.getElementById('announcement-modal').classList.remove('hidden');
+  
       });
       
       // 关闭公告模态框
-      document.getElementById('close-announcement-modal').addEventListener('click', () => {
-        document.getElementById('announcement-modal').classList.add('hidden');
-      });
+
       
       document.getElementById('close-announcement-btn').addEventListener('click', () => {
-        document.getElementById('announcement-modal').classList.add('hidden');
+  
       });
       
       // 点击模态框外部关闭
       document.getElementById('announcement-modal').addEventListener('click', (e) => {
         if (e.target === document.getElementById('announcement-modal')) {
-          document.getElementById('announcement-modal').classList.add('hidden');
+    
         }
       });
       
@@ -1547,6 +1543,7 @@
             checkinBtn.classList.add('bg-green-500');
             
             // 显示奖励
+            playSound('achievement-sound');
             alert(`签到成功！获得 ${reward} 派币奖励！`);
             
             // 恢复按钮状态
@@ -1572,11 +1569,13 @@
       
       // 搜索按钮事件
       document.getElementById('search-btn').addEventListener('click', () => {
+        playSound('click-sound');
         showToast('搜索功能');
       });
       
       // 更多按钮事件
       document.getElementById('more-btn').addEventListener('click', () => {
+        playSound('click-sound');
         showToast('更多功能');
       });
 
@@ -1584,6 +1583,7 @@
       const gameCards = document.querySelectorAll('.card-hover');
       gameCards.forEach(card => {
         card.addEventListener('click', () => {
+          playSound('game-sound');
           const gameName = card.querySelector('h4')?.textContent || '游戏';
           showToast(`正在进入${gameName}...`);
         });
@@ -1653,6 +1653,456 @@
     init();
     initLogin();
     initAboutModal();
+
+    // 播放音效函数
+    function playSound(soundId) {
+      const sound = document.getElementById(soundId);
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log('Audio play failed:', e));
+      }
+    }
+
+    // 显示添加选项
+    function showAddOptions() {
+      playSound('modal-sound');
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+      modal.id = 'add-options-modal';
+      
+      modal.innerHTML = `
+        <div class="bg-secondary rounded-lg p-6 w-full max-w-xs">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">添加</h3>
+            <button onclick="closeAddOptions()" class="text-textLight hover:text-white">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="space-y-3">
+            <button onclick="showAddFriendModal()" class="w-full flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
+              <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
+                <i class="fa fa-user-plus text-blue-400"></i>
+              </div>
+              <span>添加好友</span>
+            </button>
+            
+            <button onclick="showAddGroupModal()" class="w-full flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
+              <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center mr-3">
+                <i class="fa fa-users text-green-400"></i>
+              </div>
+              <span>添加群聊</span>
+            </button>
+            
+            <button onclick="showCreateGroupModal()" class="w-full flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
+              <div class="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center mr-3">
+                <i class="fa fa-plus-square text-orange-400"></i>
+              </div>
+              <span>创建群聊</span>
+            </button>
+            
+            <button onclick="showScanQRCodeModal()" class="w-full flex items-center p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
+              <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
+                <i class="fa fa-qrcode text-purple-400"></i>
+              </div>
+              <span>扫一扫</span>
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+    }
+
+    // 关闭添加选项
+    function closeAddOptions() {
+      playSound('pop-sound');
+      const modal = document.getElementById('add-options-modal');
+      if (modal) {
+        document.body.removeChild(modal);
+      }
+    }
+
+    // 显示添加好友模态框
+    function showAddFriendModal() {
+      playSound('click-sound');
+      closeAddOptions();
+      
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+      modal.id = 'add-friend-modal';
+      
+      modal.innerHTML = `
+        <div class="bg-secondary rounded-lg p-6 w-full max-w-md">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">添加好友</h3>
+            <button onclick="closeAddFriendModal()" class="text-textLight hover:text-white">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-textLight text-sm mb-1">搜索用户</label>
+              <div class="flex">
+                <input type="text" id="friend-search" class="flex-1 bg-gray-700 rounded-l-lg p-2 text-white" placeholder="输入用户名或ID">
+                <button onclick="searchFriend()" class="bg-primary text-white px-4 py-2 rounded-r-lg hover:bg-primary/80 transition-colors">
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div id="search-results" class="hidden">
+              <div class="bg-gray-800 rounded-lg p-3 flex items-center justify-between">
+                <div class="flex items-center">
+                  <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
+                    <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/8a5d3addf21c43139e0b3118ed0c2c3d~tplv-a9rns2rl98-image.image?lk3s=8e244e95&amp;rcl=202601262118193AC09D039081FF14CDF9&amp;rrcfp=f06b921b&amp;x-expires=1772025520&amp;x-signature=Dqis9eOehzjB8EkyYft%2FKwuxoa0%3D" alt="用户头像" class="w-full h-full object-cover">
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-sm">Pi用户123</h4>
+                    <p class="text-textLight text-xs">ID: 123456</p>
+                  </div>
+                </div>
+                <button onclick="sendFriendRequest()" class="bg-primary text-white px-3 py-1 rounded-full text-xs">
+                  添加
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+    }
+
+    // 关闭添加好友模态框
+    function closeAddFriendModal() {
+      const modal = document.getElementById('add-friend-modal');
+      if (modal) {
+        document.body.removeChild(modal);
+      }
+    }
+
+    // 搜索好友
+    function searchFriend() {
+      playSound('click-sound');
+      const searchInput = document.getElementById('friend-search');
+      const searchResults = document.getElementById('search-results');
+      
+      if (searchInput.value.trim()) {
+        // 模拟搜索结果
+        searchResults.classList.remove('hidden');
+      } else {
+        searchResults.classList.add('hidden');
+      }
+    }
+
+    // 发送好友请求
+    function sendFriendRequest() {
+      playSound('success-sound');
+      closeAddFriendModal();
+      showToast('好友请求已发送');
+    }
+
+    // 显示加入群聊模态框
+    function showAddGroupModal() {
+      playSound('click-sound');
+      closeAddOptions();
+      
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+      modal.id = 'add-group-modal';
+      
+      // 模拟热门群聊数据
+      const popularGroups = [
+        { id: 'group1', name: 'Pi Network 中文社区', members: '12,345', avatar: 'https://p3-doubao-search-sign.byteimg.com/labis/a9b0ec27e751f6cc2d0286acdb1e8e82~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1784971223&x-signature=1ig3VfaXZJ7bwhLwzFFl9aC%2FADM%3D' },
+        { id: 'group2', name: 'Pi 游戏玩家交流', members: '8,765', avatar: 'https://p3-doubao-search-sign.byteimg.com/labis/a9b0ec27e751f6cc2d0286acdb1e8e82~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1784971223&x-signature=1ig3VfaXZJ7bwhLwzFFl9aC%2FADM%3D' },
+        { id: 'group3', name: 'Pi 挖矿技术讨论', members: '5,432', avatar: 'https://p3-doubao-search-sign.byteimg.com/labis/a9b0ec27e751f6cc2d0286acdb1e8e82~tplv-be4g95zd3a-image.jpeg?lk3s=feb11e32&x-expires=1784971223&x-signature=1ig3VfaXZJ7bwhLwzFFl9aC%2FADM%3D' }
+      ];
+      
+      modal.innerHTML = `
+        <div class="bg-secondary rounded-lg p-6 w-full max-w-md">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">添加群聊</h3>
+            <button onclick="closeAddGroupModal()" class="text-textLight hover:text-white">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-textLight text-sm mb-1">群聊ID或扫码</label>
+              <div class="flex">
+                <input type="text" class="flex-1 bg-gray-700 rounded-l-lg p-2 text-white" placeholder="输入群聊ID">
+                <button class="bg-primary text-white px-4 py-2 rounded-r-lg hover:bg-primary/80 transition-colors">
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div>
+              <h4 class="text-textLight text-sm mb-2">热门群聊</h4>
+              <div class="space-y-3">
+                ${popularGroups.map(group => `
+                  <div class="bg-gray-800 rounded-lg p-3 flex items-center justify-between">
+                    <div class="flex items-center">
+                      <div class="w-10 h-10 rounded-full overflow-hidden mr-3">
+                        <img src="${group.avatar}" alt="${group.name}" class="w-full h-full object-cover">
+                      </div>
+                      <div>
+                        <h4 class="font-medium text-sm">${group.name}</h4>
+                        <p class="text-textLight text-xs">${group.members} 成员</p>
+                      </div>
+                    </div>
+                    <button onclick="joinGroup('${group.id}', '${group.name}')" class="bg-primary text-white px-3 py-1 rounded-full text-xs">
+                      加入
+                    </button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+    }
+
+    // 关闭加入群聊模态框
+    function closeAddGroupModal() {
+      const modal = document.getElementById('add-group-modal');
+      if (modal) {
+        document.body.removeChild(modal);
+      }
+    }
+
+    // 加入群聊
+    function joinGroup(groupId, groupName) {
+      playSound('success-sound');
+      closeAddGroupModal();
+      showToast(`已成功加入群聊: ${groupName}`);
+    }
+
+    // 显示创建群聊模态框
+    function showCreateGroupModal() {
+      playSound('click-sound');
+      closeAddOptions();
+      
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+      modal.id = 'create-group-modal';
+      
+      // 模拟好友列表数据
+      const friends = [
+        { id: 'friend1', name: 'Pi用户123', avatar: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/8a5d3addf21c43139e0b3118ed0c2c3d~tplv-a9rns2rl98-image.image?lk3s=8e244e95&amp;rcl=202601262118193AC09D039081FF14CDF9&amp;rrcfp=f06b921b&amp;x-expires=1772025520&amp;x-signature=Dqis9eOehzjB8EkyYft%2FKwuxoa0%3D' },
+        { id: 'friend2', name: 'Pi用户456', avatar: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/8a5d3addf21c43139e0b3118ed0c2c3d~tplv-a9rns2rl98-image.image?lk3s=8e244e95&amp;rcl=202601262118193AC09D039081FF14CDF9&amp;rrcfp=f06b921b&amp;x-expires=1772025520&amp;x-signature=Dqis9eOehzjB8EkyYft%2FKwuxoa0%3D' },
+        { id: 'friend3', name: 'Pi用户789', avatar: 'https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/8a5d3addf21c43139e0b3118ed0c2c3d~tplv-a9rns2rl98-image.image?lk3s=8e244e95&amp;rcl=202601262118193AC09D039081FF14CDF9&amp;rrcfp=f06b921b&amp;x-expires=1772025520&amp;x-signature=Dqis9eOehzjB8EkyYft%2FKwuxoa0%3D' }
+      ];
+      
+      modal.innerHTML = `
+        <div class="bg-secondary rounded-lg p-6 w-full max-w-md">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">创建群聊</h3>
+            <button onclick="closeCreateGroupModal()" class="text-textLight hover:text-white">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-textLight text-sm mb-1">群聊名称</label>
+              <input type="text" id="group-name" class="w-full bg-gray-700 rounded-lg p-2 text-white" placeholder="请输入群聊名称">
+            </div>
+            
+            <div>
+              <label class="block text-textLight text-sm mb-1">选择成员</label>
+              <div class="max-h-60 overflow-y-auto space-y-2">
+                ${friends.map(friend => `
+                  <div class="flex items-center p-2 bg-gray-800 rounded-lg">
+                    <input type="checkbox" id="friend-${friend.id}" class="mr-3" value="${friend.id}">
+                    <label for="friend-${friend.id}" class="flex items-center cursor-pointer">
+                      <div class="w-8 h-8 rounded-full overflow-hidden mr-2">
+                        <img src="${friend.avatar}" alt="${friend.name}" class="w-full h-full object-cover">
+                      </div>
+                      <span>${friend.name}</span>
+                    </label>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 pt-2">
+              <button onclick="closeCreateGroupModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors">
+                取消
+              </button>
+              <button onclick="createGroup()" class="px-4 py-2 bg-primary hover:bg-primary/80 text-white rounded-lg transition-colors">
+                创建
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+    }
+
+    // 关闭创建群聊模态框
+    function closeCreateGroupModal() {
+      const modal = document.getElementById('create-group-modal');
+      if (modal) {
+        document.body.removeChild(modal);
+      }
+    }
+
+    // 创建群聊
+    function createGroup() {
+      playSound('success-sound');
+      const groupName = document.getElementById('group-name').value.trim();
+      const selectedFriends = Array.from(document.querySelectorAll('#create-group-modal input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+      
+      if (!groupName) {
+        showToast('请输入群聊名称');
+        return;
+      }
+      
+      if (selectedFriends.length === 0) {
+        showToast('请至少选择一位成员');
+        return;
+      }
+      
+      closeCreateGroupModal();
+      showToast(`群聊"${groupName}"创建成功，已添加${selectedFriends.length}位成员`);
+    }
+
+    // 显示扫一扫模态框
+    function showScanQRCodeModal() {
+      closeAddOptions();
+      showToast('扫一扫功能正在开发中，敬请期待');
+    }
+
+    // 显示游戏局数选择模态框
+    function showGameModal(gameName) {
+      playSound('game-sound');
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
+      modal.id = 'game-modal';
+      
+      modal.innerHTML = `
+        <div class="bg-secondary rounded-lg p-6 w-full max-w-md">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">选择${gameName}局数</h3>
+            <button onclick="closeGameModal()" class="text-textLight hover:text-white">
+              <i class="fa fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="space-y-4">
+            <div class="text-center mb-4">
+              <p class="text-textLight mb-2">请选择您要进入的局面</p>
+              <p class="text-white">当前余额: <span id="modal-pi-balance">100.00</span> 派币</p>
+            </div>
+            
+            <div class="space-y-3">
+              <button onclick="joinGame('${gameName}', 0.1)" class="w-full flex items-center justify-between p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center mr-3">
+                    <i class="fa fa-signal text-green-400 text-xl"></i>
+                  </div>
+                  <div class="text-left">
+                    <h4 class="font-medium">初级场</h4>
+                    <p class="text-textLight text-sm">适合新手玩家</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-white font-bold text-lg">0.1 派币</p>
+                  <p class="text-textLight text-xs">需质押</p>
+                </div>
+              </button>
+              
+              <button onclick="joinGame('${gameName}', 1)" class="w-full flex items-center justify-between p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
+                    <i class="fa fa-bolt text-blue-400 text-xl"></i>
+                  </div>
+                  <div class="text-left">
+                    <h4 class="font-medium">中级场</h4>
+                    <p class="text-textLight text-sm">适合有经验的玩家</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-white font-bold text-lg">1 派币</p>
+                  <p class="text-textLight text-xs">需质押</p>
+                </div>
+              </button>
+              
+              <button onclick="joinGame('${gameName}', 5)" class="w-full flex items-center justify-between p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
+                    <i class="fa fa-trophy text-purple-400 text-xl"></i>
+                  </div>
+                  <div class="text-left">
+                    <h4 class="font-medium">高级场</h4>
+                    <p class="text-textLight text-sm">适合高手玩家</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-white font-bold text-lg">5 派币</p>
+                  <p class="text-textLight text-xs">需质押</p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // 更新模态框中的余额显示
+      const modalBalance = document.getElementById('modal-pi-balance');
+      const myBalance = document.getElementById('my-pi-balance');
+      if (modalBalance && myBalance) {
+        modalBalance.textContent = myBalance.textContent;
+      }
+    }
+
+    // 关闭游戏模态框
+    function closeGameModal() {
+      playSound('pop-sound');
+      const modal = document.getElementById('game-modal');
+      if (modal) {
+        document.body.removeChild(modal);
+      }
+    }
+
+    // 加入游戏
+    function joinGame(gameName, cost) {
+      // 获取当前余额
+      const balanceElement = document.getElementById('my-pi-balance');
+      let currentBalance = parseFloat(balanceElement.textContent);
+      
+      // 检查余额是否足够
+      if (currentBalance < cost) {
+        playSound('error-sound');
+        showToast(`余额不足，需要 ${cost} 派币`);
+        return;
+      }
+      
+      // 扣除派币（质押）
+      currentBalance -= cost;
+      balanceElement.textContent = currentBalance.toFixed(2);
+      
+      closeGameModal();
+      
+      // 模拟进入游戏
+      playSound('success-sound');
+      showToast(`正在进入${gameName} ${cost}派币局...`);
+      
+      // 2秒后显示游戏开始
+      setTimeout(() => {
+        playSound('achievement-sound');
+        showToast(`${gameName}游戏开始！`);
+      }, 2000);
+    }
   </script>
 
 
